@@ -1,0 +1,63 @@
+[bot]
+nickname = "麦麦" # bot的名称
+qq =  #qq号
+reply_probability = 20 #回复概率(百分之)
+reply_messagelength = 5
+reply_messagetime = 4
+debug = false
+# 使用本地默认 NapCat/OneBot 网关地址
+websocket_url = "ws://localhost:8099/" # WebSocket连接地址
+
+[filterlist]
+# 黑名单词语列表，可以添加多个词语
+black_terms = []
+# 过滤后的输出选项，可以有多个选项（随机选择一个），留空数组[]则不发送任何消息
+blacklist_out = []
+
+# API 密钥
+[api_keys]
+# SILICONFLOW = ""#去https://cloud.siliconflow.cn/me/account/ak  获取
+
+# 自定义接口地址
+[base_urls]
+SILICONFLOW = "https://api.siliconflow.cn/v1"
+
+[personality]
+# 建议50字以内，描述人格的核心特质
+personality_core = ""
+# 人格的细节，描述人格的一些侧面
+personality_side = ""
+#アイデンティティがない 生まれないらららら
+# 可以描述外貌，性别，身高，职业，属性等等描述
+identity = ""
+
+# 群聊白名单配置
+[whitelist]
+# 允许机器人响应的群聊ID列表
+group_ids = []
+
+# 上下文记忆配置
+[context_memory]
+# 每个群聊最大保存的消息条数
+max_messages = 20
+# 每条消息的最大字符数（超过会被截断）
+max_message_length = 300
+# 是否启用上下文记忆功能
+enabled = true
+
+# 消息回复模型
+[reply_model]
+name = "deepseek-ai/DeepSeek-V3"
+provider = "SILICONFLOW"
+pri_in = 2
+pri_out = 8
+temp = 0.2
+
+# 判断是否要回复等等的模型，建议使用免费且快速的小模型
+[estimate_model]
+name = "Qwen/Qwen3-8B"
+provider = "SILICONFLOW"
+pri_in = 2
+pri_out = 8
+temp = 0.2
+thinking = false

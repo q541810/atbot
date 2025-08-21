@@ -1,0 +1,24 @@
+[plugin]
+name = "随机话题_plugin"
+version = "1.0.0"
+introduce = "随机抛出群聊话题开场白，支持关键词触发"
+enabled = false
+min_version = "beta_0.3.0"
+
+[action1]
+# 触发关键词（包含即可触发）
+key_word = [
+  "随机话题",
+  "来个话题",
+  "抛个话题",
+  "挑个话题",
+  "话题来了",
+  "来点话题"
+]
+# 对应插件函数名
+def_name = "随机话题"
+# 无需额外参数
+parameter_quantity = 0
+
+# 可选：限制可用用户（用户ID，不是QQ号）
+# whitelist = [2082806261]
