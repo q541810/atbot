@@ -53,3 +53,4 @@ pip install websockets toml openai requests dotenv packaging websocket-client
 # 交流群：
 点击链接加入群聊【atbot1群】：https://qm.qq.com/q/QTbAS9HUSk
 群号:1019465737
+~~我才初中，写的有不好之处不好求别喷~~
