@@ -1,0 +1,52 @@
+[bot]
+nickname = "" # bot的名称!!!!!
+qq=#qq号!!!!!
+reply_probability=33#回复概率(百分之)
+debug = false # 是否开启调试信息
+websocket_url = "ws://localhost:8099/" # 非必要不要改
+
+# 允许机器人响应的群聊ID列表!!!!!
+group_ids = []
+
+[api_keys]
+SILICONFLOW = "你的api_key"#去https://cloud.siliconflow.cn/models获取apikey
+
+[base_urls]
+SILICONFLOW = "https://api.siliconflow.cn/v1"#url可以自定义
+
+
+[personality]
+# 建议50字以内，描述人格的核心特质!!!!!
+personality_core = "" 
+# 人格的细节，描述人格的一些侧面!!!!!
+personality_side = ""
+# 可以描述外貌，性别，身高，职业，属性等等描述!!!!!
+#つくりはなし作り話ですが  forget about it
+identity = ""
+
+# 群聊白名单配置
+[whitelist]
+
+# 上下文记忆配置
+[context_memory]
+# 每个群聊最大保存的消息条数
+max_messages = 20
+# 每条消息的最大字符数（超过会被截断）
+max_message_length = 300
+# 是否启用上下文记忆功能
+enabled = true
+
+[reply_model]#消息回复模型
+name = "deepseek-ai/DeepSeek-V3"
+provider = "SILICONFLOW"
+pri_in = 2
+pri_out = 8
+temp = 0.2
+
+[estimate_model]#判断是否要回复等等的模型，建议使用免费且快速的小模型
+name = "Qwen/Qwen3-8B"
+provider = "SILICONFLOW"
+pri_in = 2
+pri_out = 8
+temp = 0.2
+thinking = false
