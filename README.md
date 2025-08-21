@@ -48,7 +48,7 @@ pip install websockets toml openai requests dotenv packaging websocket-client
 <img width="1169" height="753" alt="image" src="https://github.com/user-attachments/assets/0167e4ba-2f06-402b-a3eb-0f03a9a582c6" />
 <img width="671" height="756" alt="image" src="https://github.com/user-attachments/assets/8342cde9-1964-4c60-8968-4325034fa11c" />
 ## 3.1启动！
-好了，恭喜你，你已经完成了最基本的部署操作，接下来就去编辑atbot目录下的bot_config.toml吧（配置文件，必填的地方我都加上了"!!!!!"这5个感叹号以方便分辨（可以用来ctrl+f查询））
+好了，恭喜你，你已经完成了最基本的部署操作，接下来就去编辑atbot目录下的bot_config.toml吧（配置文件）
 填写后我们就可以进入atbot这个目录使用python3 demo.py这段命令启动啦
 # 交流群：
 点击链接加入群聊【atbot1群】：https://qm.qq.com/q/QTbAS9HUSk
