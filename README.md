@@ -29,7 +29,11 @@ python3 -V
 ```
 若显示Python 3.11或以上，那么就开始下一步
 (如果你安装了但是显示没有此命令，请重新安装python并在安装过程中勾选PATH)
-#### 1.3 安装依赖库
+#### 1.3 把项目文件git下来
+```bash
+git@github.com:q541810/atbot.git
+```
+#### 1.4 安装依赖库
 ```bash
 pip install websockets toml openai requests dotenv packaging websocket-client
 ```
