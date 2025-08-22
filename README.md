@@ -17,23 +17,17 @@ atBot 是一个基于 OneBot 协议的 QQ 机器人，支持智能回复、~~表
 
 ### 1. 准备工作
 
-#### 1.1 克隆或下载项目
-```bash
-# 创建文件夹并进入
-mkdir atbot
-cd atbot
-```
-#### 1.2 确定python版本
+#### 1.1 确定python版本
 ```bash
 python3 -V
 ```
 若显示Python 3.11或以上，那么就开始下一步
 (如果你安装了但是显示没有此命令，请重新安装python并在安装过程中勾选PATH)#注：windows用户才需勾选path
-#### 1.3 下载项目文件
+#### 1.2 下载项目文件
 ```bash
 git clone https://github.com/q541810/atbot.git
 ```
-#### 1.4 安装依赖库
+#### 1.3 安装依赖库
 ```bash
 pip install websockets toml openai requests dotenv packaging websocket-client
 ```
