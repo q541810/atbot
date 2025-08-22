@@ -12,8 +12,7 @@ atBot 是一个基于 OneBot 协议的 QQ 机器人，支持智能回复、~~表
 - NapCat QQ 或其他支持 OneBot 协议的框架
 - 网络连接（用于访问 AI 模型 API）
 - 一个良好的脑子
-- 一个win/mac/windows的电脑/~~esp32~~
-  （windows请打开cmd输入指令，mac和liunx使用ssh就行）
+- 一个win/windows的电脑/~~esp32~~
 ## 部署步骤
 
 ### 1. 准备工作
