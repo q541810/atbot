@@ -1,6 +1,6 @@
 [bot]
 nickname = "" # bot的名称（必填）
-qq =  #bot的qq号(必填)
+qq =  #bot的qq号（必填）
 reply_probability = 20 #回复概率(百分之)
 reply_messagelength = 5
 reply_messagetime = 4
