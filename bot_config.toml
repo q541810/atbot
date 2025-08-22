@@ -1,6 +1,6 @@
 [bot]
-nickname = "麦麦" # bot的名称
-qq =  #qq号
+nickname = "" # bot的名称（必填）
+qq =  #bot的qq号(必填)
 reply_probability = 20 #回复概率(百分之)
 reply_messagelength = 5
 reply_messagetime = 4
@@ -16,9 +16,9 @@ blacklist_out = []
 
 # API 密钥
 [api_keys]
-# SILICONFLOW = ""#去https://cloud.siliconflow.cn/me/account/ak  获取
+SILICONFLOW = "api_key填写在这里"#去https://cloud.siliconflow.cn/me/account/ak  获取（必填）
 
-# 自定义接口地址
+#接口地址
 [base_urls]
 SILICONFLOW = "https://api.siliconflow.cn/v1"
 
