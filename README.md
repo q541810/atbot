@@ -4,15 +4,15 @@
 
 ## 项目简介
 
-atBot 是一个基于 OneBot 协议的 QQ 机器人，支持智能回复、~~表情包识别(待实现)~~、@消息处理等功能。
-
+atBot 是一个基于 OneBot v11 协议的 QQ 机器人，支持智能回复、@消息处理等功能。
+(理论上来说微信，钉钉，飞书啥的都没问题)
 ## 环境要求
 
 - Python 3.11+
 - NapCat QQ 或其他支持 OneBot 协议的框架
 - 网络连接（用于访问 AI 模型 API）
 - 一个良好的脑子
-- 一个win/windows的电脑/~~esp32~~
+- 一个win/liunx的电脑~~或者esp32（划掉）~~
 ## 部署步骤
 
 ### 1. 准备工作
@@ -44,9 +44,10 @@ pip install websockets toml openai requests dotenv packaging websocket-client
 <img width="1169" height="753" alt="image" src="https://github.com/user-attachments/assets/0167e4ba-2f06-402b-a3eb-0f03a9a582c6" />
 <img width="671" height="756" alt="image" src="https://github.com/user-attachments/assets/8342cde9-1964-4c60-8968-4325034fa11c" />
 ### 3.1启动！
-好了，恭喜你，你已经完成了最基本的部署操作，接下来就去编辑atbot目录下的bot_config.toml吧（配置文件）
+好了，恭喜你，你已经完成了最基本的部署操作，接下来就去编辑atbot目录下的bot_config.toml吧（配置文件，必填！！！！）
 填写后我们就可以进入atbot这个目录使用python3 demo.py这段命令启动啦
-# 交流群：
+~~ps：建议给麻花藤上贡（冲svip(十块钱一个月的就行，能大大减少封号的概率)）~~
+# qq群：
 点击链接加入群聊【atbot1群】：https://qm.qq.com/q/QTbAS9HUSk
 群号:1019465737
-~~我才初中，写的有不好之处不好求别喷~~
+
