@@ -1,226 +1,101 @@
 import os
 import toml
-from typing import Dict, Any, Optional
+from dotenv import load_dotenv
 
-class ConfigManager:
-    """配置管理器，用于读取和管理所有配置文件"""
-    
-    def __init__(self, config_dir: str = None):
-        """初始化配置管理器
-        
-        Args:
-            config_dir: 配置文件目录，默认为当前脚本所在目录
-        """
-        if config_dir is None:
-            config_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        self.config_dir = config_dir
-        self.env_file = os.path.join(config_dir, '.env')
-        self.bot_config_file = os.path.join(config_dir, 'bot_config.toml')
-        
-        # 存储配置数据
-        self.env_config = {}
-        self.bot_config = {}
-        self.reply_models = {}
-        
-        # 加载所有配置
-        self._load_all_configs()
-    
-    def _load_all_configs(self):
-        """加载所有配置文件"""
-        self._load_env_config()
-        self._load_bot_config()
-        self._parse_reply_models()
-    
-    def _load_env_config(self):
-        """加载.env文件配置（已禁用）"""
-        # .env 配置已停用，不再从环境变量加载任何配置
-        return
-    
-    def _load_bot_config(self):
-        """加载bot_config.toml文件配置"""
-        if os.path.exists(self.bot_config_file):
-            try:
-                with open(self.bot_config_file, 'r', encoding='utf-8') as f:
-                    self.bot_config = toml.load(f)
-            except Exception as e:
-                print(f"错误: 无法读取bot_config.toml文件: {e}")
-                self.bot_config = {}
-        else:
-            print(f"警告: bot_config.toml文件不存在: {self.bot_config_file}")
-    
-    def _parse_reply_models(self):
-        """解析回复模型配置，仅从 bot_config.toml 读取"""
-        self.reply_models = {}
-        if 'reply_model' in self.bot_config:
-            self.reply_models['reply_model'] = self.bot_config['reply_model']
-    
-    def get_api_key(self, provider: str) -> str:
-        """获取指定提供商的API密钥（不再从环境变量读取）"""
-        if 'api_keys' in self.bot_config and provider.upper() in self.bot_config['api_keys']:
-            return self.bot_config['api_keys'][provider.upper()]
-        return ''
-    
-    def get_base_url(self, provider: str) -> str:
-        """获取指定提供商的基础URL（不再从环境变量读取）"""
-        if 'base_urls' in self.bot_config and provider.upper() in self.bot_config['base_urls']:
-            return self.bot_config['base_urls'][provider.upper()]
-        return ''
+def load_adapter_config():
+    """读取适配器配置文件 adapter_config.toml。"""
+    # 构建配置文件路径
+    config_path = os.path.join(os.path.dirname(__file__), 'config', 'adapter_config.toml')
+    with open(config_path, 'r', encoding='utf-8') as f:
+        return toml.load(f)
 
+def load_bot_config():
+    """读取 bot 配置文件 bot_config.toml。"""
+    # 构建配置文件路径
+    config_path = os.path.join(os.path.dirname(__file__), 'config', 'bot_config.toml')
+    with open(config_path, 'r', encoding='utf-8') as f:
+        return toml.load(f)
 
+def load_model_config():
+    """读取模型配置文件 .env，并提取相关环境变量。"""
+    # 构建配置文件路径
+    config_path = os.path.join(os.path.dirname(__file__), 'config', '.env')
+    load_dotenv(config_path)
     
-    def get_bot_info(self) -> Dict[str, Any]:
-        """获取机器人基本信息"""
-        return self.bot_config.get('bot', {})
+    model_config = {}
+    # 动态加载所有以 _URL 和 _KEY 结尾的环境变量
+    for key, value in os.environ.items():
+        if key.endswith('_URL'):
+            provider = key[:-4].lower()  # 移除 _URL 并转为小写
+            model_config[provider] = {'url': value}
+        elif key.endswith('_KEY'):
+            provider = key[:-4].lower()
+            if provider not in model_config:
+                model_config[provider] = {}
+            model_config[provider]['key'] = value
     
-    def get_personality(self) -> Dict[str, Any]:
-        """获取机器人人格配置"""
-        return self.bot_config.get('personality', {})
+    return model_config
+
+def _get_provider_config(env_config, provider):
+    """根据提供商名称获取对应的配置，如果不存在则返回 None。"""
+    provider_lower = provider.lower()
+    return env_config.get(provider_lower)
+
+def load_adaptive_model_config():
+    """自适应读取模型配置，根据 bot_config.toml 中的模型设置自动匹配对应的 API 配置。"""
+    from log import error  # 延迟导入以避免循环导入
+    bot_config = load_bot_config()  # 加载 bot 配置
+    env_config = load_model_config()  # 加载环境配置
     
-    def get_context_memory_config(self):
-        """获取上下文记忆配置"""
-        return self.bot_config.get('context_memory', {
-            'max_messages': 10,
-            'max_message_length': 300,
-            'enabled': True
-        })
+    adaptive_config = {
+        '回复模型_url': '',
+        '回复模型_key': '',
+        '回复模型_model': '',
+        '判断模型_url': '',
+        '判断模型_key': '',
+        '判断模型_model': '',
+        '图片模型_url': '',
+        '图片模型_key': '',
+        '图片模型_model': '',
+        '图片模型_switch': False
+    }
     
-    def get_whitelist_config(self):
-        """获取群聊白名单配置"""
-        return self.bot_config.get('whitelist', {
-            'group_ids': []
-        })
+    # 配置回复模型
+    replyer_1 = bot_config.get('model', {}).get('replyer_1', {})
+    provider = replyer_1.get('provider', '')
+    model_name = replyer_1.get('name', '')
+    config = _get_provider_config(env_config, provider)
+    if config:
+        adaptive_config['回复模型_url'] = config.get('url', '')
+        adaptive_config['回复模型_key'] = config.get('key', '')
+        adaptive_config['回复模型_model'] = model_name
+    else:
+        error(f"回复模型提供商 '{provider}' 未在 .env 中找到配置。")
     
-    def get_reply_config(self):
-        """获取智能回复配置"""
-        bot_section = self.bot_config.get('bot', {})
-        return {
-            'reply_probability': bot_section.get('reply_probability', 20),
-            'reply_messagelength': bot_section.get('reply_messagelength', 5),
-            'reply_messagetime': bot_section.get('reply_messagetime', 4)
-        }
+    # 配置判断模型
+    utils_small = bot_config.get('model', {}).get('utils_small', {})
+    provider = utils_small.get('provider', '')
+    model_name = utils_small.get('name', '')
+    config = _get_provider_config(env_config, provider)
+    if config:
+        adaptive_config['判断模型_url'] = config.get('url', '')
+        adaptive_config['判断模型_key'] = config.get('key', '')
+        adaptive_config['判断模型_model'] = model_name
+    else:
+        error(f"判断模型提供商 '{provider}' 未在 .env 中找到配置。")
     
-    def get_estimate_model_config(self):
-        """获取判断模型配置"""
-        estimate_config = self.bot_config.get('estimate_model', {})
-        if estimate_config:
-            provider = estimate_config.get('provider', '')
-            return {
-                'name': estimate_config.get('name', ''),
-                'provider': provider,
-                'key': self.get_api_key(provider),
-                'url': self.get_base_url(provider),
-                'pri_in': estimate_config.get('pri_in', 0),
-                'pri_out': estimate_config.get('pri_out', 0),
-                'temp': estimate_config.get('temp', 0.2)
-            }
-        return {}
+    # 配置图片识别模型
+    picture = bot_config.get('model', {}).get('picture', {})
+    provider = picture.get('provider', '')
+    model_name = picture.get('name', '')
+    switch = picture.get('开关', False)
+    config = _get_provider_config(env_config, provider)
+    if config:
+        adaptive_config['图片模型_url'] = config.get('url', '')
+        adaptive_config['图片模型_key'] = config.get('key', '')
+        adaptive_config['图片模型_model'] = model_name
+        adaptive_config['图片模型_switch'] = switch
+    else:
+        error(f"图片模型提供商 '{provider}' 未在 .env 中找到配置。")
     
-
-    
-    def get_reply_model(self, model_name: str = 'reply_model') -> Dict[str, Any]:
-        """获取回复模型配置"""
-        model_config = self.reply_models.get(model_name, {})
-        if model_config:
-            provider = model_config.get('provider', '')
-            return {
-                'name': model_config.get('name', ''),
-                'provider': provider,
-                'key': self.get_api_key(provider),
-                'url': self.get_base_url(provider),
-                'pri_in': model_config.get('pri_in', 0), # 默认值
-                'pri_out': model_config.get('pri_out', 0), # 默认值
-                'temp': model_config.get('temp', 0.0) # 默认值
-            }
-        return {}
-    
-    def get_all_reply_models(self) -> Dict[str, Dict[str, Any]]:
-        """获取所有回复模型配置"""
-        result = {}
-        for model_name in self.reply_models:
-            result[model_name] = self.get_reply_model(model_name)
-        return result
-    
-    def print_config_summary(self):
-        """打印配置摘要"""
-        print("=== 配置文件加载摘要 ===")
-        
-        # 机器人信息
-        bot_info = self.get_bot_info()
-        if bot_info:
-            print(f"机器人昵称: {bot_info.get('nickname', '未设置')}")
-            print(f"机器人QQ: {bot_info.get('qq', '未设置')}")
-        
-        # 人格信息
-        personality = self.get_personality()
-        if personality:
-            print(f"人格核心: {personality.get('personality_core', '未设置')[:30]}...")
-        
-        # 模型配置
-        models = self.get_all_reply_models()
-        print(f"已配置的回复模型数量: {len(models)}")
-        for model_name, config in models.items():
-            print(f"  - {model_name}: {config.get('name', '未知')} ({config.get('provider', '未知')})")
-            print(f"    Key: {'已配置' if config.get('key') else '未配置'}")
-            print(f"    URL: {config.get('url', '未配置')}")
-            print(f"    pri_in: {config.get('pri_in', '未配置')}")
-            print(f"    pri_out: {config.get('pri_out', '未配置')}")
-            print(f"    temp: {config.get('temp', '未配置')}")
-        
-        print("=== 配置加载完成 ===")
-
-
-# 创建全局配置管理器实例
-config_manager = ConfigManager()
-
-# 便捷访问函数
-def get_bot_info():
-    """获取机器人信息"""
-    return config_manager.get_bot_info()
-
-def get_personality():
-    """获取人格配置"""
-    return config_manager.get_personality()
-
-def get_reply_model(model_name='reply_model'):
-    """获取回复模型配置"""
-    return config_manager.get_reply_model(model_name)
-
-def get_whitelist_config():
-    """获取群聊白名单配置"""
-    return config_manager.get_whitelist_config()
-
-def get_reply_config():
-    """获取智能回复配置"""
-    return config_manager.get_reply_config()
-
-def get_estimate_model_config():
-    """获取判断模型配置"""
-    return config_manager.get_estimate_model_config()
-
-
-# 创建一个简化的bot对象，方便在demo.py中使用
-class Bot:
-    def __init__(self):
-        bot_info = get_bot_info()
-        personality = get_personality()
-        
-        self.nickname = bot_info.get('nickname', '麦麦')
-        self.qq = bot_info.get('qq', 0)
-        self.personality_core = personality.get('personality_core', '')
-        self.personality_side = personality.get('personality_side', '')
-        self.identity = personality.get('identity', '')
-
-# 创建全局bot实例
-bot = Bot()
-
-if __name__ == "__main__":
-    # 测试配置读取
-    config_manager.print_config_summary()
-    
-    print("\n=== 测试配置访问 ===")
-    print(f"Bot昵称: {bot.nickname}")
-    print(f"Bot QQ: {bot.qq}")
-    
-    reply_model = get_reply_model()
-    print(f"默认回复模型: {reply_model}")
+    return adaptive_config

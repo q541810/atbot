@@ -1,0 +1,7 @@
+[napcat_server] # Napcat连接的ws服务设置
+host = "localhost"      # Napcat设定的主机地址，请替换为实际主机
+port = 8099             # Napcat设定的端口 
+
+[chat] # 群聊白名单功能
+group_list = [] # 白名单，请添加您的群组ID
+# 只有白名单中的群组可以聊天

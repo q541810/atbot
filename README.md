@@ -1,18 +1,20 @@
 # atbot
-一个写插件究极简单的qqbot，同时专注于在qq水群~~~（大概吧）
+一个写插件究极简单的qqbot，同时专注于在qq水群~~~（大概吧）（注：beta0.4.0 已重构所有代码，增加了新功能，插件系统暂时废弃）
 # atBot 部署指南
 
 ## 项目简介
 
-atBot 是一个基于 OneBot v11 协议的 QQ 机器人，支持智能回复、@消息处理等功能。
-(理论上来说微信，钉钉，飞书啥的都没问题)
+atBot 是一个基于 OneBot 协议的 QQ 机器人，支持智能回复、表情包\图片识别、@消息处理等功能。
+
+当前版本: beta0.4.0 - 重构了所有代码，增加了新功能（插件系统暂时废弃）。
+
 ## 环境要求
 
 - Python 3.11+
 - NapCat QQ 或其他支持 OneBot 协议的框架
 - 网络连接（用于访问 AI 模型 API）
 - 一个良好的脑子
-- 一个win/liunx的电脑~~或者esp32（划掉）~~
+- 一个win/~~~mac~~~/windows的电脑
 ## 部署步骤
 
 ### 1. 准备工作
@@ -22,7 +24,7 @@ atBot 是一个基于 OneBot v11 协议的 QQ 机器人，支持智能回复、@
 python3 -V
 ```
 若显示Python 3.11或以上，那么就开始下一步
-(如果你安装了但是显示没有此命令，请重新安装python并在安装过程中勾选PATH)#注：windows用户才需勾选path
+(如果你安装了但是显示没有此命令，请重新安装python并在安装过程中勾选PATH)
 #### 1.2 下载项目文件
 ```bash
 git clone https://github.com/q541810/atbot.git
@@ -32,22 +34,18 @@ git clone https://github.com/q541810/atbot.git
 pip install websockets toml openai requests dotenv packaging websocket-client
 ```
 （这里遇到的问题比较多，报错了不会的建议去问ai）
-### 恭喜🎉，现在的主程序部分已经好了，继续进行下一步吧
-### 2.1安装napcatqq(其他onebot协议的也行)
-根据 https://napneko.github.io/guide/boot/Shell 的教程安装napcat
-### 2.2登录并配置napcat
+## 恭喜🎉，现在的主程序部分已经好了，继续进行下一步吧
+## 2.1安装napcatqq(其他onebot协议的也行)
+根据https://napneko.github.io/guide/boot/Shell的教程安装napcat
+## 2.2登录并配置napcat
 首先，访问http://127.0.0.1:6099/webui/
-(如果你没在本地电脑部署napcat，请把127.0.0.1替换成那台电脑的ip)
 然后登录(默认密码为"napcat"(不带双引号))
 使用qq扫码登录后根据图文教程操作:
-(图片加载需要时间)
 <img width="1169" height="753" alt="image" src="https://github.com/user-attachments/assets/0167e4ba-2f06-402b-a3eb-0f03a9a582c6" />
 <img width="671" height="756" alt="image" src="https://github.com/user-attachments/assets/8342cde9-1964-4c60-8968-4325034fa11c" />
-### 3.1启动！
-好了，恭喜你，你已经完成了最基本的部署操作，接下来就去编辑atbot目录下的bot_config.toml吧（配置文件，必填！！！！）
-填写后我们就可以进入atbot这个目录使用python3 demo.py这段命令启动啦
-~~ps：建议给麻花藤上贡（冲svip(十块钱一个月的就行，能大大减少封号的概率)）~~
-# qq群：
-点击链接加入群聊【atbot1群】：https://qm.qq.com/q/QTbAS9HUSk
+## 3.1启动！
+好了，恭喜你，你已经完成了最基本的部署操作，接下来就去编辑atbot/config文件下的三个配置文件吧
+填写后我们就可以进入atbot这个目录使用python3 bot.py这段命令启动啦
+# 交流群：
 群号:1019465737
-
+~~没经验，写的有不好之处不好求别喷~~
