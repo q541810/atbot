@@ -36,7 +36,7 @@ pip install websockets toml openai requests dotenv packaging websocket-client
 （这里遇到的问题比较多，报错了不会的建议去问ai）
 ## 恭喜🎉，现在的主程序部分已经好了，继续进行下一步吧
 ## 2.1安装napcatqq(其他onebot协议的也行)
-根据https://napneko.github.io/guide/boot/Shell的教程安装napcat
+根据https://napneko.github.io/guide/boot/Shell 的教程安装napcat
 ## 2.2登录并配置napcat
 首先，访问http://127.0.0.1:6099/webui/
 然后登录(默认密码为"napcat"(不带双引号))
