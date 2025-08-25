@@ -48,6 +48,7 @@ identity = bot_config['personality']['identity']
 提示词 = (f"# 核心人格\n{personality_core}\n---\n# 侧面人格\n{personality_side}\n---\n# 固定身份\n{identity}")
 
 第一次连接=True
+回复=False
 
 async def main():
     global 第一次连接
