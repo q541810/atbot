@@ -76,6 +76,7 @@ async def main():
                             try:
                                 图片描述 = await asyncio.wait_for(图片识别(消息内容, 图片模型_key, 图片模型_url, 图片模型_model), timeout=10)
                                 消息内容 = f"[图片:{图片描述}]"
+                                回复=False
                             except asyncio.TimeoutError:
                                 warning("图片识别线程长时间不返回内容，直接跳过")
                                 消息内容 = "[图片]"
@@ -107,12 +108,10 @@ async def main():
                      if len(group_context[群号]) > 消息记录长度:
                          group_context[群号] = group_context[群号][-消息记录长度:]  # 保留最新的N条消息
                       
-                     if 消息类型!="文字":
-                        if 消息类型!="图片":
-                            回复=False
-                            info(f"收到来自{群号}的{人名}的消息: {消息内容}。")
-                        else:
-                            回复=True
+                     if 消息类型=="文字":
+                        回复=True
+                     else:
+                        回复=False
                      #触发事件:回复
                      if 回复:
                          最近五条 = "\n".join(group_context.get(群号, [])[-5:])
