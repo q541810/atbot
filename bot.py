@@ -105,7 +105,7 @@ async def main():
                          group_context[群号] = group_context[群号][-消息记录长度:]  # 保留最新的N条消息
                       
                      if 消息类型!="文字":
-                        if 消息类型!="图片":
+                        if 消息类型=="图片":
                             回复=False
                             info(f"收到来自{群号}的{人名}的消息: {消息内容}。")
                      else:
