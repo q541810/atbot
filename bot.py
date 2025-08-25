@@ -75,7 +75,6 @@ async def main():
                             try:
                                 图片描述 = await 图片识别(消息内容, 图片模型_key, 图片模型_url, 图片模型_model)
                                 消息内容 = f"[图片:{图片描述}]"
-                                info(f"图片描述: {图片描述}")
                             except Exception as e:
                                 error(f"图片识别出错: {e}")
                                 消息内容 = "[图片]"
