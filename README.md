@@ -34,7 +34,7 @@ git clone https://github.com/q541810/atbot.git
 ```bash
 pip install websockets toml openai requests dotenv packaging websocket-client
 ```
-（这里遇到的问题比较多，报错了不会的建议去问ai）
+（这里遇到的问题比较多，报错了不会的建议去问ai或者在群里问）
 ## 恭喜🎉，现在的主程序部分已经好了，继续进行下一步吧
 ## 2.1安装napcatqq(其他onebot协议的也行)
 根据https://napneko.github.io/guide/boot/Shell 的教程安装napcat
