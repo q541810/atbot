@@ -1,15 +1,16 @@
 import asyncio
 import sys
 import os
+import time
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from log import debug, info
+from log import debug, info, warning
 from openai import OpenAI
 from pydantic.types import T
 
 async def llm_if(message: str, bot_name: str, bot_qq: int, url: str, key: str, model: str, message_content: str, bot_Prompt: str, 消息记录: str = ""):
     """使用 LLM 判断机器人对消息的兴趣度（0-10），并根据特定条件调整。"""
     提起名字 = False
-    if "@" in message and str(bot_qq) in message:
+    if "@" in message and str(bot_name) in message:
         info("被@,兴趣度改为10")
         return int(10)
     else:

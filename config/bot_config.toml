@@ -1,20 +1,24 @@
 [bot]
-bot的名字="麦麦"
+bot的名字="" # 请替换为bot的名字
 bot的qq号=0 # 请替换为实际QQ号
 回复兴趣=7 #兴趣度>=这个数就回复(0~10)
 消息记录长度=15 #按条算
+替换词=[]
+被替换词=[]
 调试模式=false
+
 [personality]
-# 建议50字以内，描述人格的核心特质
-personality_core = "" 
-# 人格的细节，描述人格的一些侧面
-personality_side = ""
-#アイデンティティがない 生まれないらららら
+# 建议50字以内，描述人格的核心特质                    
+personality_core = ""                         #请填写为bot的人设
+# 人格的细节，描述人格的一些侧面              
+personality_side = ""                         #请填写为bot的人设
+#アイデンティティがない 生まれないらららら           
 # 可以描述外貌，性别，身高，职业，属性等等描述
-identity = ""
+identity = ""                                #请填写为bot的人设
+
 [model.utils_small] # 在bot的一些组件中使用的小模型，消耗量较大，建议使用速度较快的小模型
 # 强烈建议使用免费的小模型
-name = "Qwen/Qwen2.5-32B-Instruct"
+name = "Qwen/Qwen2.5-7B-Instruct"
 provider = "SILICONFLOW"
 [model.replyer_1] # 回复模型
 name = "deepseek-ai/DeepSeek-V3"

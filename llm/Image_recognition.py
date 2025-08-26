@@ -3,6 +3,7 @@ import requests
 from openai import OpenAI
 import os
 import json
+from log import info
 
 async def 图片识别(链接:str,api_key:str,api_url:str,model_name:str)->str:
     """
@@ -31,6 +32,7 @@ async def 图片识别(链接:str,api_key:str,api_url:str,model_name:str)->str:
             # 如果 JSON 无效，初始化为空字典
             cache = {}
     if image_hash in cache:
+        info(f"图片识别缓存命中，图片描述为：{cache[image_hash]}")
         return cache[image_hash]
     """
     图片识别
@@ -50,7 +52,7 @@ async def 图片识别(链接:str,api_key:str,api_url:str,model_name:str)->str:
             "content": [
                 {
                     "type": "text",
-                    "text": "请描写图片中的内容。若你认为这张图片可能是用于表达情绪的表情包，这时请着重输出他表达的情绪元素（其他的也要有，但是情绪元素至少有4点）。输出要少于100token，直截了当。"
+                    "text": "请描写图片中的内容。若你认为这张图片可能是用于表达情绪的表情包，这时请着重输出他表达的情绪元素（其他的也要有，但是情绪元素至少有4点）。输出要少于70token，直截了当。"
                 },
                 {
                     "type": "image_url",
@@ -67,4 +69,5 @@ async def 图片识别(链接:str,api_key:str,api_url:str,model_name:str)->str:
     cache[image_hash] = 图片描述
     with open(cache_file, 'w', encoding='utf-8') as f:
         json.dump(cache, f, ensure_ascii=False, indent=4)
+    info(f"图片识别成功，图片描述为：{图片描述}")
     return 图片描述

@@ -18,9 +18,11 @@ bot_config = load_bot_config()
 adaptive_model_config = load_adaptive_model_config()
 host = adapter_config['napcat_server']['host']
 port = adapter_config['napcat_server']['port']
-bot_name = bot_config['bot']['bot的名字']  # "麦麦"
-bot_qq = bot_config['bot']['bot的qq号']    # 385487834
-reply_interest = bot_config['bot']['回复兴趣']  # 0.5
+bot_name = bot_config['bot']['bot的名字'] 
+bot_qq = bot_config['bot']['bot的qq号'] 
+reply_interest = bot_config['bot']['回复兴趣']
+替换词 = bot_config['bot'].get('替换词', [])
+被替换词 = bot_config['bot'].get('被替换词', []) 
 # 提示词将通过personality配置动态生成
 maxtoken = bot_config['model']['replyer_1']['maxtoken']
 回复模型_url = adaptive_model_config['回复模型_url']
@@ -44,10 +46,11 @@ group_context = {}  # 存储每个群聊的消息历史
 personality_core = bot_config['personality']['personality_core']
 personality_side = bot_config['personality']['personality_side']
 identity = bot_config['personality']['identity']
-
+#合成提示词
 提示词 = (f"# 核心人格\n{personality_core}\n---\n# 侧面人格\n{personality_side}\n---\n# 固定身份\n{identity}")
 
 第一次连接=True
+#为防止无法访问局部变量的报错，定义一个全局变量在这里
 回复=False
 
 async def main():
@@ -76,6 +79,7 @@ async def main():
                          if 图片模型_switch:
                             try:
                                 图片描述 = await asyncio.wait_for(图片识别(消息内容, 图片模型_key, 图片模型_url, 图片模型_model), timeout=10)
+                                # 日志输出在这个函数内部
                                 消息内容 = f"[图片:{图片描述}]"
                                 回复=False
                             except asyncio.TimeoutError:
@@ -89,7 +93,6 @@ async def main():
                      elif 消息类型=="文件":
                          消息内容=f"[文件]"
               
-                     被艾特 = False
                      # 只要消息中包含 @后跟5~12位数字，就执行一次替换（可能有多个@数字会统一处理）
                      # 处理 @QQ -> @昵称 并判断是否被@
                      try:
@@ -97,7 +100,6 @@ async def main():
                              消息内容 = await 替换消息中的at(消息内容, host, port, bot_qq=bot_qq, bot_name=bot_name, 群号=群号)
                      except Exception as e:
                          warning(f"处理@用户名时出错: {e}")
-                     被艾特 = f"@{bot_name}" in 消息内容
                      # 为每个群聊维护独立的上下文记录
                      if 群号 not in group_context:
                          group_context[群号] = []  # 初始化该群的消息历史
@@ -116,34 +118,24 @@ async def main():
                      #触发事件:回复
                      if 回复:
                          最近五条 = "\n".join(group_context.get(群号, [])[-5:])
-                         if 被艾特:
-                             兴趣 = 10
-                             info("被@,兴趣度改为10")
-                         else:
+                         try:
                              兴趣 = await llm_if((f"""{人名}发了消息:{消息内容}"""), bot_name, bot_qq, 判断模型_url, 判断模型_key, 判断模型_model, 消息内容, 提示词, 消息记录=最近五条)
                              if 兴趣 == "error:0":
                                  warning("判断错误0:判断模型返回值为空")
+                                 兴趣=0
                              elif 兴趣 == "error:1":
                                  warning("判断错误1:ValueError")
+                                 兴趣=0
+                         except Exception as e:
+                             warning(f"判断模型出错: {e}")
                          info(f"收到来自{群号}的{人名}消息: {消息内容}。兴趣度:{兴趣}")
-                         if isinstance(兴趣, (int, float)) and 兴趣>=reply_interest:
-                             # 检查群聊频率限制（每4秒最多调用一次）
-                             current_time = time.time()
-                             if 群号 in group_last_call_time:
-                                 time_diff = current_time - group_last_call_time[群号]
-                                 if time_diff < 6.0:  # 4秒内不允许重复调用
-                                     info(f"群{群号}频率限制：距离上次调用仅{time_diff:.1f}秒，跳过本次回复")
-                                     continue
-                             
-                             # 更新最后调用时间
-                             group_last_call_time[群号] = current_time
-                             
+                         if 兴趣>=reply_interest:                         
                              async def 回复群消息():
                                  try:
                                      # 使用该群的完整消息历史作为上下文
                                      群消息历史 = "\n".join(group_context[群号])
                                      单条完整消息=f"{人名}发了: {消息内容}"
-                                     回复内容=await llm_send_message(消息历史=[群消息历史],单条完整消息=单条完整消息,那个人的名字=人名,bot名字=bot_name,提示词=提示词,群号=群号,napcat_host=host,napcat_port=port,api_url=回复模型_url,api_key=回复模型_key,模型=回复模型_model,是否发至群里=True,最大token=maxtoken)
+                                     回复内容=await llm_send_message(消息历史=[群消息历史],单条完整消息=单条完整消息,那个人的名字=人名,bot名字=bot_name,提示词=提示词,群号=群号,napcat_host=host,napcat_port=port,api_url=回复模型_url,api_key=回复模型_key,模型=回复模型_model,是否发至群里=True,最大token=maxtoken,替换词=替换词, 被替换词=被替换词)
                                      debug(f"发给判断模型的消息历史:{群消息历史}")
                                      # 将bot的回复也添加到群聊上下文中
                                      if 回复内容:
@@ -170,7 +162,7 @@ async def main():
 if __name__ == "__main__":
     # 这里可以调用你的函数
     try:
-        print("当前版本:beta0.4.0")
+        print("当前版本:beta0.4.1")
         print("启动中.....")
         asyncio.run(main())
     except KeyboardInterrupt:
