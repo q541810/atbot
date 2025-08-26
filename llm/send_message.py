@@ -1,6 +1,5 @@
 import asyncio
 import errno
-from nt import error
 from openai import OpenAI
 import websockets
 import json
