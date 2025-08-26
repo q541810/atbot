@@ -162,7 +162,7 @@ async def main():
 if __name__ == "__main__":
     # 这里可以调用你的函数
     try:
-        print("当前版本:beta0.4.1")
+        print("当前版本:beta0.4.0")
         print("启动中.....")
         asyncio.run(main())
     except KeyboardInterrupt:

@@ -1,6 +1,6 @@
 import hashlib
 import requests
-from openai import OpenAI
+from openai import AsyncOpenAI
 import os
 import json
 from log import info
@@ -37,12 +37,12 @@ async def 图片识别(链接:str,api_key:str,api_url:str,model_name:str)->str:
     """
     图片识别
     """
-    client = OpenAI(
+    client = AsyncOpenAI(
     api_key=api_key,
     base_url=api_url,
     )
 
-    response = client.chat.completions.create(
+    response = await client.chat.completions.create(
         model=model_name,
         max_tokens=200,
         temperature=0.3,
