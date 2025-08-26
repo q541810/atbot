@@ -14,7 +14,7 @@ atBot 是一个基于 OneBot 协议的 QQ 机器人，支持智能回复、表�
 - NapCat QQ 或其他支持 OneBot 协议的框架
 - 网络连接（用于访问 AI 模型 API）
 - 一个良好的脑子
-- 一个win/~~mac~~/windows的电脑
+- 一个liunx/~~mac~~/windows的电脑
 ## 部署步骤
 
 ### 1. 准备工作
@@ -33,7 +33,7 @@ git clone https://github.com/q541810/atbot.git
 ```bash
 pip install websockets toml openai requests dotenv packaging websocket-client
 ```
-（这里遇到的问题比较多，报错了不会的建议去问ai）
+（这里遇到的问题比较多，报错了不会的建议去问ai或者在群里问）
 ## 恭喜🎉，现在的主程序部分已经好了，继续进行下一步吧
 ## 2.1安装napcatqq(其他onebot协议的也行)
 根据https://napneko.github.io/guide/boot/Shell 的教程安装napcat
