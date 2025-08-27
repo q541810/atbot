@@ -8,7 +8,7 @@
 
 atBot 是一个基于 OneBot 协议的 QQ 机器人，支持智能回复、表情包\图片识别、@消息处理等功能。
 
-当前版本: beta0.4.0 - 重构了所有代码，增加了新功能（插件系统暂时废弃）。
+# 部署
 
 ## 环境要求
 
@@ -16,9 +16,7 @@ atBot 是一个基于 OneBot 协议的 QQ 机器人，支持智能回复、表�
 - NapCat QQ 或其他支持 OneBot 协议的框架
 - 网络连接（用于访问 AI 模型 API）
 - 一个良好的脑子
-- 一个liunx/~~mac~~/windows的电脑
-
-## Python直接部署
+- 一个liunx/windows的电脑
 
 ### 确定python版本
 
@@ -28,7 +26,27 @@ python -V
 
 若显示Python 3.11或以上，那么就开始下一步
 (如果你安装了但是显示没有此命令，请重新安装python并在安装过程中勾选PATH)
+## 使用uv工具部署
 
+### 克隆项目
+
+```bash
+git clone https://github.com/q541810/atbot.git
+cd atbot
+```
+
+### 安装uv
+```bash
+pip install uv
+```
+### 使用uv安装依赖
+```bash
+uv sync
+```
+
+*安装完成*
+## Python直接部署（传统方法）
+## 【注：若您已经使用了uv部署，请跳过python直接部署的步骤，开始安装napcat】
 ### 下载项目文件
 
 ```bash
@@ -59,28 +77,9 @@ pip3 install -r requirements.txt
 
 *安装完成*
 
-## 使用uv工具部署
-
-### 克隆项目
-
-```bash
-git clone https://github.com/q541810/atbot.git
-cd atbot
-```
-
-### 安装依赖
-
-```bash
-uv sync
-```
-
-*安装完成*
-（这里遇到的问题比较多，报错了不会的建议去问ai或者在群里问）
-
 ## 恭喜🎉，现在的主程序部分已经好了，继续进行下一步吧
 
 ### 安装napcatqq(其他onebot协议的也行)
-
 根据<https://napneko.github.io/guide/boot/Shell> 的教程安装napcat
 
 ### 登录并配置napcat
@@ -93,18 +92,20 @@ uv sync
 
 ## 启动
 
-好了，恭喜你，你已经完成了最基本的部署操作
+启动：
+若您使用了uv部署方法，请使用:
+
+```bash
+uv run bot.py
+
+```
+若是传统的python直接部署的方法，请你使用:
 
 ```bash
 python bot.py
 ```
 
 或
-
-```bash
-uv run bot.py
-
-```
 
 *交流群*
 
