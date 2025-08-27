@@ -1,0 +1,15 @@
+[project]
+name = "atbot"
+version = "0.4.0"
+description = "atBot is a QQ robot based on the OneBot protocol, supporting smart replies, emoticon and image recognition, and @message processing."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "dotenv>=0.9.9",
+    "openai>=1.101.0",
+    "packaging>=25.0",
+    "requests>=2.32.5",
+    "toml>=0.10.2",
+    "websocket-client>=1.8.0",
+    "websockets>=15.0.1",
+]
