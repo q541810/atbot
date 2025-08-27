@@ -74,10 +74,9 @@ async def llm_send_message(消息历史,那个人的名字,单条完整消息,bo
             {"role": "user", "content": f"""消息历史:{消息历史},你要回复的消息：{单条完整消息}（他不一定在和你说话，请注意判断）"""}
     ]
     )
-    if completion.choices[0].message.content == "0":
-        info("回复模型认为消息不应回复")
-        return "111111111"
-        # 获取返回内容并处理
+
+    
+    # 获取返回内容并处理
     content = completion.choices[0].message.content
     if content is None or content == "" or content ==" ":
         warning("llm返回为空")

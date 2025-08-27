@@ -1,6 +1,8 @@
 import asyncio
 from operator import truediv
+import random
 import websockets
+from websockets.exceptions import ConnectionClosed
 import os
 import time
 import re
@@ -12,7 +14,9 @@ from type_analysis import parse_msg
 from data.read_the_username import 替换消息中的at
 from llm.Image_recognition import 图片识别
 
+
 # 加载配置
+
 adapter_config = load_adapter_config()
 bot_config = load_bot_config()
 adaptive_model_config = load_adaptive_model_config()
@@ -54,6 +58,7 @@ identity = bot_config['personality']['identity']
 回复=False
 
 async def main():
+    global 回复
     global 第一次连接
     uri = f"ws://{host}:{port}/"
     
@@ -151,13 +156,13 @@ async def main():
                                         error(f"回复模型出错: {e}")
                              asyncio.create_task(回复群消息())
                             
-        except websockets.exceptions.ConnectionClosed:
+        except ConnectionClosed:
             warning("WebSocket连接已关闭，尝试重新连接...")
             await asyncio.sleep(5)  # 等待5秒后重新连接
         except Exception as e:
-            error(f"连接出错: {e}，尝试重新连接...")
+            error(f"出现错误: {e}")
             await asyncio.sleep(5)  # 等待5秒后重新连接
-            
+        
 # 示例使用
 if __name__ == "__main__":
     # 这里可以调用你的函数
