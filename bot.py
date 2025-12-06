@@ -10,48 +10,46 @@ from log import info,debug,warning,error
 from llm.if_module import llm_if
 from llm.send_message import llm_send_message
 from read_config import load_adapter_config,load_bot_config,load_adaptive_model_config
+from config.errors import ConfigError, ConfigErrorBundle
 from type_analysis import parse_msg
 from data.read_the_username import 替换消息中的at
 from llm.Image_recognition import 图片识别
 
 
-# 加载配置
-
-adapter_config = load_adapter_config()
-bot_config = load_bot_config()
-adaptive_model_config = load_adaptive_model_config()
-host = adapter_config['napcat_server']['host']
-port = adapter_config['napcat_server']['port']
-bot_name = bot_config['bot']['bot的名字'] 
-bot_qq = bot_config['bot']['bot的qq号'] 
-reply_interest = bot_config['bot']['回复兴趣']
-替换词 = bot_config['bot'].get('替换词', [])
-被替换词 = bot_config['bot'].get('被替换词', []) 
-# 提示词将通过personality配置动态生成
-maxtoken = bot_config['model']['replyer_1']['maxtoken']
-回复模型_url = adaptive_model_config['回复模型_url']
-回复模型_key = adaptive_model_config['回复模型_key']
-回复模型_model = adaptive_model_config['回复模型_model']
-判断模型_url = adaptive_model_config['判断模型_url']
-判断模型_key = adaptive_model_config['判断模型_key']
-判断模型_model = adaptive_model_config['判断模型_model']
-图片模型_url = adaptive_model_config['图片模型_url']
-图片模型_key = adaptive_model_config['图片模型_key']
-图片模型_model = adaptive_model_config['图片模型_model']
-图片模型_switch = adaptive_model_config['图片模型_switch']
+adapter_config = {}
+bot_config = {}
+adaptive_model_config = {}
+host = ''
+port = 0
+bot_name = ''
+bot_qq = 0
+reply_interest = 0
+替换词 = []
+被替换词 = []
+maxtoken = 0
+回复模型_url = ''
+回复模型_key = ''
+回复模型_model = ''
+判断模型_url = ''
+判断模型_key = ''
+判断模型_model = ''
+图片模型_url = ''
+图片模型_key = ''
+图片模型_model = ''
+图片模型_switch = False
 
 # 群聊频率限制
 group_last_call_time = {}
 
 # 群聊上下文记录
 group_context = {}  # 存储每个群聊的消息历史
-消息记录长度 = bot_config['bot']['消息记录长度']  # 从配置文件读取消息记录长度
+消息记录长度 = 15 # 默认值，稍后从配置更新
 
-personality_core = bot_config['personality']['personality_core']
-personality_side = bot_config['personality']['personality_side']
-identity = bot_config['personality']['identity']
+personality_core = ""
+personality_side = ""
+identity = ""
 #合成提示词
-提示词 = (f"# 核心人格\n{personality_core}\n---\n# 侧面人格\n{personality_side}\n---\n# 固定身份\n{identity}")
+提示词 = ""
 
 第一次连接=True
 #为防止无法访问局部变量的报错，定义一个全局变量在这里
@@ -60,6 +58,45 @@ identity = bot_config['personality']['identity']
 async def main():
     global 回复
     global 第一次连接
+    global adapter_config, bot_config, adaptive_model_config
+    global host, port, bot_name, bot_qq, reply_interest, 替换词, 被替换词
+    global maxtoken, 回复模型_url, 回复模型_key, 回复模型_model, 判断模型_url, 判断模型_key, 判断模型_model, 图片模型_url, 图片模型_key, 图片模型_model, 图片模型_switch
+    global 消息记录长度, personality_core, personality_side, identity, 提示词
+    try:
+        adapter_config = load_adapter_config()
+        bot_config = load_bot_config()
+        adaptive_model_config = load_adaptive_model_config()
+    except ConfigErrorBundle as e:
+        error(str(e))
+        return
+    except ConfigError as e:
+        error(str(e))
+        return
+    host = adapter_config['napcat_server']['host']
+    port = adapter_config['napcat_server']['port']
+    bot_name = bot_config['bot']['bot的名字']
+    bot_qq = bot_config['bot']['bot的qq号']
+    reply_interest = bot_config['bot']['回复兴趣']
+    替换词 = bot_config['bot'].get('替换词', [])
+    被替换词 = bot_config['bot'].get('被替换词', [])
+    maxtoken = bot_config['model']['replyer_1']['maxtoken']
+    回复模型_url = adaptive_model_config['回复模型_url']
+    回复模型_key = adaptive_model_config['回复模型_key']
+    回复模型_model = adaptive_model_config['回复模型_model']
+    判断模型_url = adaptive_model_config['判断模型_url']
+    判断模型_key = adaptive_model_config['判断模型_key']
+    判断模型_model = adaptive_model_config['判断模型_model']
+    图片模型_url = adaptive_model_config['图片模型_url']
+    图片模型_key = adaptive_model_config['图片模型_key']
+    图片模型_model = adaptive_model_config['图片模型_model']
+    图片模型_switch = adaptive_model_config['图片模型_switch']
+    
+    消息记录长度 = bot_config['bot']['消息记录长度']
+    personality_core = bot_config['personality']['personality_core']
+    personality_side = bot_config['personality']['personality_side']
+    identity = bot_config['personality']['identity']
+    提示词 = (f"# 核心人格\n{personality_core}\n---\n# 侧面人格\n{personality_side}\n---\n# 固定身份\n{identity}")
+
     uri = f"ws://{host}:{port}/"
     
     while True:
@@ -102,7 +139,7 @@ async def main():
                      # 处理 @QQ -> @昵称 并判断是否被@
                      try:
                          if re.search(r"@\d{5,12}", 消息内容):
-                             消息内容 = await 替换消息中的at(消息内容, host, port, bot_qq=bot_qq, bot_name=bot_name, 群号=群号)
+                             消息内容 = await 替换消息中的at(消息内容, host, port, bot_qq=bot_qq, bot_name=bot_name, 群号=群号, websocket=websocket)
                      except Exception as e:
                          warning(f"处理@用户名时出错: {e}")
                      # 为每个群聊维护独立的上下文记录
@@ -135,12 +172,12 @@ async def main():
                              warning(f"判断模型出错: {e}")
                          info(f"收到来自{群号}的{人名}消息: {消息内容}。兴趣度:{兴趣}")
                          if 兴趣>=reply_interest:                         
-                             async def 回复群消息():
+                             async def 回复群消息(ws):
                                  try:
                                      # 使用该群的完整消息历史作为上下文
                                      群消息历史 = "\n".join(group_context[群号])
                                      单条完整消息=f"{人名}发了: {消息内容}"
-                                     回复内容=await llm_send_message(消息历史=[群消息历史],单条完整消息=单条完整消息,那个人的名字=人名,bot名字=bot_name,提示词=提示词,群号=群号,napcat_host=host,napcat_port=port,api_url=回复模型_url,api_key=回复模型_key,模型=回复模型_model,是否发至群里=True,最大token=maxtoken,替换词=替换词, 被替换词=被替换词)
+                                     回复内容=await llm_send_message(消息历史=[群消息历史],单条完整消息=单条完整消息,那个人的名字=人名,bot名字=bot_name,提示词=提示词,群号=群号,napcat_host=host,napcat_port=port,api_url=回复模型_url,api_key=回复模型_key,模型=回复模型_model,是否发至群里=True,最大token=maxtoken,替换词=替换词, 被替换词=被替换词, websocket=ws)
                                      debug(f"发给判断模型的消息历史:{群消息历史}")
                                      # 将bot的回复也添加到群聊上下文中
                                      if 回复内容:
@@ -154,7 +191,7 @@ async def main():
                                         pass  # 如果是9-10位数字则忽略
                                     else:
                                         error(f"回复模型出错: {e}")
-                             asyncio.create_task(回复群消息())
+                             asyncio.create_task(回复群消息(websocket))
                             
         except ConnectionClosed:
             warning("WebSocket连接已关闭，尝试重新连接...")

@@ -1,5 +1,5 @@
 [napcat_server] # Napcat连接的ws服务设置
-host = "ws://localhost"      # Napcat设定的主机地址，请替换为实际主机
+host = "ws://localhost/ws"      # Napcat设定的主机地址，请把"localhost"替换为实际ip地址
 port = 8099             # Napcat设定的端口 
 
 [chat] # 群聊白名单功能
