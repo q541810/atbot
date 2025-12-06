@@ -44,7 +44,7 @@ async def 图片识别(链接:str,api_key:str,api_url:str,model_name:str)->str:
 
     response = await client.chat.completions.create(
         model=model_name,
-        max_tokens=200,
+        max_tokens=3000,
         temperature=0.3,
         messages=[
         {
@@ -52,7 +52,7 @@ async def 图片识别(链接:str,api_key:str,api_url:str,model_name:str)->str:
             "content": [
                 {
                     "type": "text",
-                    "text": "请描写图片中的内容。若你认为这张图片可能是用于表达情绪的表情包，这时请着重输出他表达的情绪元素（其他的也要有，但是情绪元素至少有4点）。输出要少于70token，直截了当。"
+                    "text": "请描写图片中的内容。若你认为这张图片可能是用于表达情绪的表情包，这时请着重输出他表达的情绪元素（其他的也要有，但是情绪元素至少有4点）。"
                 },
                 {
                     "type": "image_url",
